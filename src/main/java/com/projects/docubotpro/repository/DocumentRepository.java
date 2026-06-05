@@ -1,4 +1,7 @@
 package com.projects.docubotpro.repository;
 
-public interface DocumentRepository {
+import com.projects.docubotpro.model.Document;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DocumentRepository extends JpaRepository<Document,Long> {
 }
