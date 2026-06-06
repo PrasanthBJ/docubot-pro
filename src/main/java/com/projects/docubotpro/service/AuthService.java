@@ -4,6 +4,8 @@ import com.projects.docubotpro.config.JwtService;
 import com.projects.docubotpro.dto.AuthResponse;
 import com.projects.docubotpro.dto.LoginRequest;
 import com.projects.docubotpro.dto.RegisterRequest;
+import com.projects.docubotpro.exception.BadRequestException;
+import com.projects.docubotpro.exception.ResourceNotFoundException;
 import com.projects.docubotpro.model.Users;
 import com.projects.docubotpro.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class AuthService {
 
         // Step 1 — Check if email already exists
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new BadRequestException("Email already registered");
         }
 
         // Step 2 — Hash the password
@@ -52,11 +54,11 @@ public class AuthService {
 
         // Step 1 — Find user by email
         Users user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Step 2 — Compare passwords
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new  BadRequestException("Invalid password");
         }
 
         // Step 3 — Generate JWT token

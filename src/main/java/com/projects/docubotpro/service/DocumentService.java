@@ -1,6 +1,8 @@
 package com.projects.docubotpro.service;
 
 import com.projects.docubotpro.dto.DocumentResponse;
+import com.projects.docubotpro.exception.BadRequestException;
+import com.projects.docubotpro.exception.ResourceNotFoundException;
 import com.projects.docubotpro.model.Document;
 import com.projects.docubotpro.model.Users;
 import com.projects.docubotpro.repository.DocumentRepository;
@@ -33,14 +35,14 @@ public class DocumentService {
 
         // Step 1 - Get logged in user
         Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Step 2 - Validate file type
         String originalFileName = file.getOriginalFilename();
         String fileExtension = getFileExtension(originalFileName);
 
         if (!isAllowedFileType(fileExtension)) {
-            throw new RuntimeException("File type not allowed. Only PDF, DOCX, TXT are accepted");
+            throw new BadRequestException("File type not allowed. Only PDF, DOCX, TXT are accepted");
         }
 
         // Step 3 - Create uploads folder if not exists
@@ -49,7 +51,7 @@ public class DocumentService {
             try {
                 Files.createDirectories(uploadPath);
             } catch (IOException e) {
-                throw new RuntimeException("Could not create upload folder");
+                throw new BadRequestException("Could not create upload folder");
             }
         }
 
@@ -61,7 +63,7 @@ public class DocumentService {
         try {
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new RuntimeException("Could not save file");
+            throw new BadRequestException("Could not save file");
         }
 
         // Step 6 - Save metadata to DB
@@ -83,7 +85,7 @@ public class DocumentService {
     public List<DocumentResponse> getAllDocuments(String email) {
 
         Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return documentRepository.findByUser(user)
                 .stream()
@@ -95,10 +97,10 @@ public class DocumentService {
     public DocumentResponse getDocumentById(Long id, String email) {
 
         Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Document document = documentRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Document not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));;
 
         return mapToResponse(document);
     }
@@ -107,16 +109,16 @@ public class DocumentService {
     public void deleteDocument(Long id, String email) {
 
         Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Document document = documentRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new RuntimeException("Document not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
 
         // Delete file from disk
         try {
             Files.deleteIfExists(Paths.get(document.getFilePath()));
         } catch (IOException e) {
-            throw new RuntimeException("Could not delete file from disk");
+            throw new BadRequestException("Could not delete file from disk");
         }
 
         // Delete from DB
