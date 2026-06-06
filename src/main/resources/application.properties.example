@@ -1,0 +1,39 @@
+spring.application.name=docubot-pro
+
+# ─── Database ───────────────────────────────────────────
+spring.datasource.url=jdbc:postgresql://localhost:5433/docubot
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# ─── JPA / Hibernate ────────────────────────────────────
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# ─── JWT ────────────────────────────────────────────────
+jwt.secret=your_jwt_secret_min_256_bits
+jwt.expiration=86400000
+
+# ─── File Upload ────────────────────────────────────────
+file.upload-dir=uploads
+spring.servlet.multipart.max-file-size=10MB
+spring.servlet.multipart.max-request-size=10MB
+
+# ─── Spring AI Groq (Chat) ───────────────────────────────
+spring.ai.openai.api-key=your_groq_api_key
+spring.ai.openai.base-url=https://api.groq.com/openai
+spring.ai.openai.chat.options.model=llama-3.3-70b-versatile
+spring.ai.openai.chat.options.temperature=0.7
+
+# ─── Jina AI (Embeddings) ───────────────────────────────
+spring.ai.openai.embedding.api-key=your_jina_api_key
+spring.ai.openai.embedding.base-url=https://api.jina.ai
+spring.ai.openai.embedding.options.model=jina-embeddings-v2-base-en
+
+# ─── pgvector ───────────────────────────────────────────
+spring.ai.vectorstore.pgvector.initialize-schema=true
+spring.ai.vectorstore.pgvector.index-type=HNSW
+spring.ai.vectorstore.pgvector.distance-type=COSINE_DISTANCE
+spring.ai.vectorstore.pgvector.dimensions=768
