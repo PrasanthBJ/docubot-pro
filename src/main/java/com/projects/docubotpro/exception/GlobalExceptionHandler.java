@@ -36,9 +36,12 @@ public class GlobalExceptionHandler {
     // Handle 500 - Any other unexpected error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        // Print full error to console
+        ex.printStackTrace();
+
         ErrorResponse error = ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .message("Something went wrong. Please try again.")
+                .message(ex.getMessage())  // show actual message instead of generic one
                 .timestamp(LocalDateTime.now())
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);

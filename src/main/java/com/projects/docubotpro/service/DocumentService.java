@@ -27,13 +27,15 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
 
+    private final RagService ragService;
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
     // Upload a file
     public DocumentResponse uploadDocument(MultipartFile file, String email) {
 
-        // Step 1 - Get logged in user
+        // Step 1 - Get logged-in user
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -76,12 +78,13 @@ public class DocumentService {
                 .build();
 
         Document saved = documentRepository.save(document);
+        ragService.processDocument(saved);
 
         // Step 7 - Return response
         return mapToResponse(saved);
     }
 
-    // Get all documents for logged in user
+    // Get all documents for logged-in user
     public List<DocumentResponse> getAllDocuments(String email) {
 
         Users user = userRepository.findByEmail(email)

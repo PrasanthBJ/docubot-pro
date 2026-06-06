@@ -21,6 +21,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
+    private final RagService ragService;
 
     public ChatResponse askQuestion(ChatRequest request, String email) {
 
@@ -35,7 +36,7 @@ public class ChatService {
         // Step 3 - Save question with dummy answer for now
         ChatMessage chatMessage = ChatMessage.builder()
                 .question(request.getQuestion())
-                .answer("AI answer coming soon...")  // placeholder until RAG phase
+                .answer(ragService.generateAnswer(request.getQuestion(), document.getId()))  // placeholder until RAG phase
                 .document(document)
                 .user(user)
                 .build();
