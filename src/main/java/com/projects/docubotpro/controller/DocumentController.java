@@ -18,7 +18,6 @@ public class DocumentController {
     private final DocumentService documentService;
     private final JwtService jwtService;
 
-    // POST /api/documents/upload
     @PostMapping("/upload")
     public ResponseEntity<DocumentResponse> uploadDocument(
             @RequestParam("file") MultipartFile file,
@@ -29,7 +28,6 @@ public class DocumentController {
         return ResponseEntity.ok(response);
     }
 
-    // GET /api/documents
     @GetMapping
     public ResponseEntity<List<DocumentResponse>> getAllDocuments(
             @RequestHeader("Authorization") String authHeader) {
@@ -39,7 +37,6 @@ public class DocumentController {
         return ResponseEntity.ok(documents);
     }
 
-    // GET /api/documents/{id}
     @GetMapping("/{id}")
     public ResponseEntity<DocumentResponse> getDocumentById(
             @PathVariable Long id,
@@ -50,7 +47,6 @@ public class DocumentController {
         return ResponseEntity.ok(document);
     }
 
-    // DELETE /api/documents/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDocument(
             @PathVariable Long id,
